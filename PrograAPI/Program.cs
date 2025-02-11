@@ -3,6 +3,9 @@ using PrograAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Validadores
+
+
 // Add services to the container.
 builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("StoreConnections"))

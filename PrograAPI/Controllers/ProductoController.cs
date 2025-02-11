@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PrograAPI.DTOs;
@@ -69,6 +70,47 @@ namespace PrograAPI.Controllers
             };
 
             return CreatedAtAction(nameof(GetById), new { Id = producto.Id }, productoDTO);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ProductoDTO>> Update(int id, ActualizarProductoDTO productoUpdateDTO)
+        {
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            producto.Nombre = productoUpdateDTO.Nombre;
+            producto.Precio = productoUpdateDTO.Precio;
+            producto.Stock = productoUpdateDTO.Stock;
+
+            await _context.SaveChangesAsync();
+
+            var productoDTO = new ProductoDTO
+            {
+                Id = producto.Id,
+                Nombre = producto.Nombre,
+                Precio = producto.Precio,
+                Stock = producto.Stock
+            };
+
+            return Ok(productoDTO);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            _context.Productos.Remove(producto);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }
